@@ -90,11 +90,28 @@ code_quality:
 #       - public
 #   only:
 #     - main
+build:
+  stage: release_creation
+  only:
+    - main
+
+  image: python:3.9
+  before_script:
+    - rm -rf dist/
+    - pip install -r requirements.txt
+    - python setup.py build
+    - python setup.py install
+  script:
+    - python setup.py sdist bdist_wheel
+  artifacts:
+    paths:
+      - dist/*whl
 
 release_creation:
   stage: release_creation
   only:
     - main
+
   image: python:3.9
   before_script:
     - rm -rf dist/
