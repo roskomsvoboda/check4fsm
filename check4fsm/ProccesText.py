@@ -26,7 +26,7 @@ class ProcessText:
                  ner: str = os.getcwd() + "/../data/NER.json"):
         self.cities = json.load(open(cities, 'r'))
         self.ner = json.load(open(ner, 'r'))
-http://nac.gov.ru/terroristicheskie-i-ekstremistskie-organizacii-i-materialy.html
+
         self.segmenter = Segmenter()
         self.morph_vocab = MorphVocab()
 
