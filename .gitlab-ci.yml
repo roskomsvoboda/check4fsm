@@ -1,0 +1,151 @@
+stages:
+  - docs
+  - release_creation
+  - publish
+
+include:
+  - template: Code-Quality.gitlab-ci.yml
+
+code_quality:
+  stage: docs
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_TAG'
+  artifacts:
+    paths: [ gl-code-quality-report.json ]
+      
+# test:
+#   stage: tests
+#   retry: 2
+#   tags:
+#     - trajectory
+#   after_script:
+#     - export project_name=$(bash -c "echo $(grep  "project"  CMakeLists.txt) | awk -F '[()]' '{print $2""$3}' |head -n1 | awk '{print $1}'")
+#     - export project_folder=$(bash -c "echo ${PWD##*/}")
+#     - export release_name=$(bash -c "echo $project_name |tr '_' '-'")
+#     - bash -c "docker run --rm --privileged    -v /dev/snd:/dev/snd  -v `pwd`/..:/usr/courier/src  -h courier courier  zsh -c 'if [ -d src/$project_folder/$project_folder.tmp ]; then rm -rf src/$project_folder/$project_folder.tmp; fi'"
+#   script:
+#     - export project_name=$(echo $(grep  "project"  CMakeLists.txt) | awk -F '[()]' '{print $2""$3}' |head -n1 | awk '{print $1}')
+#     - export project_folder=$(echo ${PWD##*/})
+#     - export release_name=$(echo $project_name |tr '_' '-')
+#     - bash -c "docker run --rm --privileged    -v /dev/snd:/dev/snd  -v `pwd`/..:/usr/courier/src  -h courier courier  bash -c 'cd  src/$project_folder && ./gitlab-ci-bash-script.bash  tests'"
+#   artifacts:
+#     when: always
+#     reports:
+#       junit: "*.xml"
+#   rules:
+#     - exists:
+#       - "tests/*cpp"
+
+
+# python-unittests:
+#   stage: tests
+#   after_script:
+#     - sudo chown gitlab-runner:root . -R
+#   script:
+#     - export project_name=$(bash -c "echo $(grep  "project"  CMakeLists.txt) | awk -F '[()]' '{print $2""$3}' |head -n1 | awk '{print $1}'")
+#     - export project_folder=$(bash -c "echo ${PWD##*/}")
+#     - export release_name=$(bash -c "echo $project_name |tr '_' '-'")
+#     - bash -c "docker run --rm --privileged    -v /dev/snd:/dev/snd  -v `pwd`/..:/usr/courier/src  -h ros3 ros3  bash -c 'cd  src/$project_folder && ./gitlab-ci-bash-script.bash  python-unit'"
+#   artifacts:
+#     when: always
+#     reports:
+#       junit: junit-reports/*.xml
+#   rules:
+#     - exists:
+#       - "tests/*py"
+
+
+# python-coverage:
+#   stage: tests
+#   before_script:
+#     - mkdir -p public
+#   after_script:
+#     - sudo chown gitlab-runner:root . -R
+#   script:
+#     - export project_name=$(bash -c "echo $(grep  "project"  CMakeLists.txt) | awk -F '[()]' '{print $2""$3}' |head -n1 | awk '{print $1}'")
+#     - export project_folder=$(bash -c "echo ${PWD##*/}")
+#     - export release_name=$(bash -c "echo $project_name |tr '_' '-'")
+#     - bash -c "docker run --rm --privileged    -v /dev/snd:/dev/snd  -v `pwd`/..:/usr/courier/src  -h ros3 ros3  bash -c 'cd  src/$project_folder && ./gitlab-ci-bash-script.bash  python-coverage'"
+#   artifacts:
+#       paths:
+#           - public/coverage.txt
+#       reports:
+#         cobertura: 'coverage.xml'
+#   coverage: '/TOTAL\s+\d+\s+\d+\s+(\d+%)/'
+#   rules:
+#     - exists:
+#       - "tests/*py"
+
+# pages:
+#   image: alpine:latest
+#   stage: pages
+#   script:
+#     - apk update && apk add doxygen && apk add graphviz ttf-freefont
+#     - doxygen docs/Doxygen
+#     - mv html/ public/
+#   artifacts:
+#     paths:
+#       - public
+#   only:
+#     - master
+
+release_creation:
+  stage: release_creation
+  only:
+    - master
+  image: python:3.9
+  before_script:
+    - rm -rf dist/
+    - pip install -r requirements.txt
+    - python setup.py build
+    - python setup.py install
+  script:
+    - python setup.py sdist bdist_wheel
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m gym_simple_grid upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+  artifacts:
+    paths:
+      - dist/*whl
+
+release_upload:
+  stage: publish
+  image: registry.gitlab.com/gitlab-org/release-cli:v0.1.0
+  tags:
+    - docker
+  only:
+    - master
+  script:
+    # - a=$(($(grep -n "\[" CHANGELOG.md | head -n3 | tail -n1 | awk -F '[:]' '{print $1}'| awk '{ print $1}') + 1))
+    # - b=$(($(grep -n "\[" CHANGELOG.md | head -n4 | tail -n1 | awk -F '[:]' '{print $1}'| awk '{ print $1}') - 1))
+    # - changelog=$(sed -n "$a,$b p" < CHANGELOG.md)
+    - release-cli --server-url https://gitlab.com --project-id  ${CI_PROJECT_ID} create --name "$(cat VERSION)" --description "Automative tag $(cat VERSION)" --tag-name "$(cat VERSION)"
+
+
+
+# Update_changelog:
+#   stage: publish
+#   only:
+#     - master
+#   image: ristleell/git-cl  
+#   before_script:
+#     - apt-get update -y && apt-get install -yqqf openssh-client git unzip sshpass rsync --fix-missing
+#     - 'which ssh-agent || (  apt-get update -y &&  apt-get install openssh-client git -y )'
+#     - eval $(ssh-agent -s)
+
+#     - mkdir -p ~/.ssh
+#     - chmod 700 ~/.ssh
+
+#     - ssh-keyscan -p 22 gitlab.com >> ~/.ssh/known_hosts
+#     - chmod 644 ~/.ssh/known_hosts
+
+#     - git config --global user.email "ristleell@gmail.com"
+#     - git config --global user.name "Gitlab Runner"
+#     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+#     #- printf "%s\n    %s\n' 'HOST gitlab.stcnetwork.keenetic.pro' 'PORT 222'" >> ~/.ssh/config
+#   script: 
+#     - git-cl full > CHANGELOG.md
+#     - git add -f CHANGELOG.md # Force add PDF since we .gitignored it
+#     - git commit -m "Update changelog from $CI_COMMIT_SHORT_SHA [skip ci]" || echo "No changes, nothing to commit!"
+#     - git remote rm origin && git remote add origin git@gitlab.com:$CI_PROJECT_PATH.git
+#     - git push origin HEAD:$CI_COMMIT_REF_NAME
