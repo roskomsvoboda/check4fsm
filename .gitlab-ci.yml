@@ -127,7 +127,6 @@ Update_changelog:
   stage: publish
   only:
     - main
-  image: ristleell/git-cl  
   before_script:
     - apt-get update -y && apt-get install -yqqf openssh-client git unzip sshpass rsync --fix-missing
     - 'which ssh-agent || (  apt-get update -y &&  apt-get install openssh-client git -y )'
