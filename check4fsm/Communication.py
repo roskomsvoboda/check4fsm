@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from ProccesText import ProcessText
-from TonalizeText import TonalText
-from ProcessAppeal import ProcessAppeal
-from extractAllData import ExtractData
+from check4fsm.ProccesText import ProcessText
+from check4fsm.TonalizeText import TonalText
+from check4fsm.ProcessAppeal import ProcessAppeal
+from check4fsm.extractAllData import ExtractData
 
 from natasha import Segmenter, Doc
 from loguru import logger
@@ -40,7 +40,7 @@ class CommunicationFlask:
 
     @logger.catch
     def run_flask(self):
-        self.app.run(host="0.0.0.0", port=9000)
+        self.app.run(host="0.0.0.0", port=9000, ssl_context='adhoc')
 
 
 if __name__ == '__main__':

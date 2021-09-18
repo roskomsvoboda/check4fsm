@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from ProccesText import ProcessText
-from TonalizeText import TonalText
-from ProcessAppeal import ProcessAppeal
+from check4fsm.ProccesText import ProcessText
+from check4fsm.TonalizeText import TonalText
+from check4fsm.ProcessAppeal import ProcessAppeal
 
 from natasha import Segmenter, Doc
 from loguru import logger

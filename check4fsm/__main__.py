@@ -5,5 +5,9 @@ from .ProcessAppeal import ProcessAppeal
 from .Communication import CommunicationFlask
 from .extractAllData import ExtractData
 
-if __name__ == '__main__':
-    pass
+import ProccesText
+import ProcessAppeal
+import prepareData
+import TonalizeText
+import Communication
+import extractAllData
