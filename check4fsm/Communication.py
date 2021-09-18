@@ -59,7 +59,10 @@ class CommunicationFlask:
 
 if __name__ == '__main__':
     logger.info("Loading all systems")
+
     p = CommunicationFlask()
+
     logger.info("Loaded all systems")
+
     p.__process_text__('я ебал в рот эту систему. Но если так подумать не так все плохо. вступайте к нам! У нас хорошо')
     p.app.run(debug=False)
