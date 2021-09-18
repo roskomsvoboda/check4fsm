@@ -9,10 +9,13 @@ class TonalText:
         self.tokenizer = RegexTokenizer()
         self.model = FastTextSocialNetworkModel(tokenizer=self.tokenizer)
 
-    def __call__(self, text) -> tuple:
+    def __call__(self, text: tuple) -> tuple:
+        if isinstance(text, str):
+            text = [text]
         model_predict = self.model.predict(text, k=5)[0]
         return max(model_predict.items(), key=lambda k: k[1])
 
+    
 
 if __name__ == '__main__':
      p = TonalText()
@@ -20,6 +23,9 @@ if __name__ == '__main__':
      print(f"Ебать как это классно: {output}")
 
      output = p(['Ебать'])
+     print(f"Ебать: {output}")
+
+     output = p('Ебать')
      print(f"Ебать: {output}")
 
      output = p(['Вам обязательно надо вступить в нашу бригаду'])

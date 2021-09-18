@@ -13,17 +13,16 @@ from natasha import (
     NewsSyntaxParser,
     NewsNERTagger,
 
-    PER,
+    PER, ORG, LOC,
     NamesExtractor,
 
-    Doc, ORG, LOC
+    Doc
 )
 
 
 class ProcessText:
     @logger.catch
-    def __init__(self, cities: str = os.getcwd() + "/../data/cities.json",
-                 ner: str = os.getcwd() + "/../data/NER.json"):
+    def __init__(self, cities: str = os.getcwd() + "/../data/cities.json", ner: str = os.getcwd() + "/../data/NER.json"):
         self.cities = json.load(open(cities, 'r'))
         self.ner = json.load(open(ner, 'r'))
 
@@ -44,9 +43,10 @@ class ProcessText:
                 return True, info["normal"]
         return False, {}
 
+    @logger.catch
     def __extract_data(self, text: str):
         doc = Doc(text)
-        doc.segment(self.segmenter)
+        doc.segment(Segmenter())
         doc.tag_morph(self.morph_tagger)
 
         for token in doc.tokens:
@@ -76,6 +76,7 @@ class ProcessText:
 
         return forbidden_info
 
+    @logger.catch
     def __call__(self, text: str):
         fi = self.__extract_data(text)
         if fi == list():
@@ -90,5 +91,5 @@ class ProcessText:
 
 
 if __name__ == '__main__':
-    p = ProcessText ()
-    print(p('Вострягов В.А. Издавалась БЫТЬ!'))
+    p = ProcessText()
+    print( f" 'Вострягов В.А. Издавалась БЫТЬ!' {p('Вострягов В.А. Издавалась БЫТЬ!')}")
