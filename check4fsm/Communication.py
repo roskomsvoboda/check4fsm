@@ -23,7 +23,7 @@ class CommunicationFlask:
 
     @staticmethod
     @logger.catch
-    @app.route('/hooks', methods=["POST"])
+    @app.route('/', methods=["POST"])
     def hooks():
         data = flask.request.json
         if data is None:
