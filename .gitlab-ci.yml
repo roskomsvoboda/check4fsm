@@ -93,8 +93,7 @@ code_quality:
 build:
   stage: release_creation
   only:
-    - main
-
+    - develop
   image: python:3.9
   before_script:
     - rm -rf dist/
@@ -111,7 +110,6 @@ release_creation:
   stage: release_creation
   only:
     - main
-
   image: python:3.9
   before_script:
     - rm -rf dist/
