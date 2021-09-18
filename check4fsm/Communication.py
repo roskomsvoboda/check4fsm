@@ -41,7 +41,7 @@ class CommunicationFlask:
 
     @logger.catch
     def run_flask(self):
-        self.app.run(host="0.0.0.0", port=9000, ssl_context='adhoc')
+        self.app.run(host="0.0.0.0", port=9000)
 
 
 if __name__ == '__main__':
