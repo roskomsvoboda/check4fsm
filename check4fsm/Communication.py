@@ -4,6 +4,7 @@ from check4fsm.ProccesText import ProcessText
 from check4fsm.TonalizeText import TonalText
 from check4fsm.ProcessAppeal import ProcessAppeal
 from check4fsm.extractAllData import ExtractData
+from check4fsm import *
 
 from natasha import Segmenter, Doc
 from loguru import logger
@@ -13,7 +14,7 @@ import nltk
 
 logger.add(".logger.log", format="{time} {level} {message}", rotation="50 MB")
 
-ed = ExtractData()
+
 
 class CommunicationFlask:
 

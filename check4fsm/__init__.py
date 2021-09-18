@@ -5,6 +5,8 @@ from .ProcessAppeal import ProcessAppeal
 from .Communication import CommunicationFlask
 from .extractAllData import ExtractData
 
+ed = ExtractData()
+
 import ProccesText
 import ProcessAppeal
 import prepareData
