@@ -103,7 +103,7 @@ release_creation:
     - python setup.py install
   script:
     - python setup.py sdist bdist_wheel
-    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m check4fsm upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m check4fsm upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*.whl
   artifacts:
     paths:
       - dist/*whl
@@ -122,29 +122,31 @@ release_upload:
     - release-cli --server-url https://gitlab.com --project-id  ${CI_PROJECT_ID} create --name "$(cat VERSION)" --description "Automative tag $(cat VERSION)" --tag-name "$(cat VERSION)"
 
 
-
-Update_changelog:
-  stage: publish
-  only:
-    - main
-  before_script:
-    - apt-get update -y && apt-get install -yqqf openssh-client git unzip sshpass rsync --fix-missing
-    - 'which ssh-agent || (  apt-get update -y &&  apt-get install openssh-client git -y )'
-    - eval $(ssh-agent -s)
-
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-
-    - ssh-keyscan -p 22 gitlab.com >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-
-    - git config --global user.email "ristleell@gmail.com"
-    - git config --global user.name "Gitlab Runner"
-    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-    #- printf "%s\n    %s\n' 'HOST gitlab.stcnetwork.keenetic.pro' 'PORT 222'" >> ~/.ssh/config
-  script: 
-    - git-cl full > CHANGELOG.md
-    - git add -f CHANGELOG.md # Force add PDF since we .gitignored it
-    - git commit -m "Update changelog from $CI_COMMIT_SHORT_SHA [skip ci]" || echo "No changes, nothing to commit!"
-    - git remote rm origin && git remote add origin git@gitlab.com:$CI_PROJECT_PATH.git
-    - git push origin HEAD:$CI_COMMIT_REF_NAME
+#
+#Update_changelog:
+#  stage: publish
+#  only:
+#    - main
+#  tags:
+#    - server
+#  before_script:
+#    - apt-get update -y && apt-get install -yqqf openssh-client git unzip sshpass rsync --fix-missing
+#    - 'which ssh-agent || (  apt-get update -y &&  apt-get install openssh-client git -y )'
+#    - eval $(ssh-agent -s)
+#
+#    - mkdir -p ~/.ssh
+#    - chmod 700 ~/.ssh
+#
+#    - ssh-keyscan -p 22 gitlab.com >> ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#
+#    - git config --global user.email "ristleell@gmail.com"
+#    - git config --global user.name "Gitlab Runner"
+#    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+#    #- printf "%s\n    %s\n' 'HOST gitlab.stcnetwork.keenetic.pro' 'PORT 222'" >> ~/.ssh/config
+#  script:
+#    - git-cl full > CHANGELOG.md
+#    - git add -f CHANGELOG.md # Force add PDF since we .gitignored it
+#    - git commit -m "Update changelog from $CI_COMMIT_SHORT_SHA [skip ci]" || echo "No changes, nothing to commit!"
+#    - git remote rm origin && git remote add origin git@gitlab.com:$CI_PROJECT_PATH.git
+#    - git push origin HEAD:$CI_COMMIT_REF_NAME
