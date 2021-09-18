@@ -1,3 +1,5 @@
 dostoevsky==0.6.0
 loguru==0.5.3
 natasha==1.4.0
+flask
+nltk

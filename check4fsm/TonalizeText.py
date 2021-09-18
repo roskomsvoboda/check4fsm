@@ -2,20 +2,23 @@
 
 from dostoevsky.tokenization import RegexTokenizer
 from dostoevsky.models import FastTextSocialNetworkModel
+from loguru import logger
 
 class TonalText:
+    @logger.catch
     def __init__(self):
 
         self.tokenizer = RegexTokenizer()
         self.model = FastTextSocialNetworkModel(tokenizer=self.tokenizer)
 
+    @logger.catch
     def __call__(self, text: tuple) -> tuple:
         if isinstance(text, str):
             text = [text]
         model_predict = self.model.predict(text, k=5)[0]
         return max(model_predict.items(), key=lambda k: k[1])
 
-    
+
 
 if __name__ == '__main__':
      p = TonalText()

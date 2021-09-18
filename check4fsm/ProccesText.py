@@ -64,7 +64,6 @@ class ProcessText:
             if fact.text in self.cities['cities'] or fact.text in self.cities['subjects']:
                 continue
             found = None
-            info = None
             if fact.type == PER:
                 found, info = ProcessText.search(self.ner, fact.as_json, 'names')
             if fact.type == LOC:
