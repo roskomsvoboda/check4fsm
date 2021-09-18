@@ -88,7 +88,7 @@ class ProcessText:
 
         return output_data
 
-
-if __name__ == '__main__':
-    p = ProcessText()
-    print( f" 'Вострягов В.А. Издавалась БЫТЬ!' {p('Вострягов В.А. Издавалась БЫТЬ!')}")
+#
+# if __name__ == '__main__':
+#     p = ProcessText()
+#     print( f" 'Вострягов В.А. Издавалась БЫТЬ!' {p('Вострягов В.А. Издавалась БЫТЬ!')}")

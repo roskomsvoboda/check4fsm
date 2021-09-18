@@ -64,8 +64,8 @@ class ProcessAppeal:
         return appeals if len(appeals) else None
 
 
-if __name__ == '__main__':
-    p = ProcessAppeal()
-    print(f"'Ты обязан вступить к нам: {p('Ты обязан вступить к нам.')}")
-
-    print(f"'Ты вступишь к нам?': {p('Ты вступишь к нам?')}")
+# if __name__ == '__main__':
+#     p = ProcessAppeal()
+#     print(f"'Ты обязан вступить к нам: {p('Ты обязан вступить к нам.')}")
+#
+#     print(f"'Ты вступишь к нам?': {p('Ты вступишь к нам?')}")
