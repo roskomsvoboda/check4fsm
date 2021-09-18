@@ -43,12 +43,15 @@ function updateUi() {
                 console.log("There is some text!\n");
                 let text = "Uploading text: " + post_box.innerHTML + " to the server..."
                 alert(text);
-                fetch('http://195.22.153.237:9000/', {
+                let body_data = {
+                    'text': post_box.innerHTML
+                }
+                fetch('https://195.22.153.237:9000/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(post_box.innerHTML)
+                    body: body_data
                 })
                 .then(response => response.json())
                 .then(data => {
