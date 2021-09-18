@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from check4fsm.ProccesText import ProcessText
-from check4fsm.TonalizeText import TonalText
-from check4fsm.ProcessAppeal import ProcessAppeal
-from check4fsm.extractAllData import ExtractData
+from ProccesText import ProcessText
+from TonalizeText import TonalText
+from ProcessAppeal import ProcessAppeal
+from extractAllData import ExtractData
 
 from natasha import Segmenter, Doc
 from loguru import logger
@@ -12,6 +12,7 @@ import time
 import nltk
 
 logger.add(".logger.log", format="{time} {level} {message}", rotation="50 MB")
+
 ed = ExtractData()
 
 class CommunicationFlask:
@@ -21,6 +22,7 @@ class CommunicationFlask:
         pass
 
     @staticmethod
+    @logger.catch
     @app.route('/hooks', methods=["POST"])
     def hooks():
         data = flask.request.json
@@ -33,8 +35,8 @@ class CommunicationFlask:
         except Exception as ex:
             logger.error(f" failed on the server {ex}")
             abort(400)
-
-        return 400, output_data
+        
+        return output_data
 
     @logger.catch
     def run_flask(self):
