@@ -3,6 +3,7 @@
 from check4fsm.ProccesText import ProcessText
 from check4fsm.TonalizeText import TonalText
 from check4fsm.ProcessAppeal import ProcessAppeal
+from check4fsm.extractAllData import ExtractData
 
 from natasha import Segmenter, Doc
 from loguru import logger
@@ -10,51 +11,34 @@ import flask
 import time
 import nltk
 
+logger.add(".logger.log", format="{time} {level} {message}", rotation="50 MB")
+ed = ExtractData()
 
 class CommunicationFlask:
+
     app = flask.Flask(__name__)
-
-    @logger.catch
     def __init__(self):
-        nltk.download('punkt')
-        self.processAppeal = ProcessAppeal()
-        self.processText = ProcessText()
-        self.tonalText = TonalText()
+        pass
 
-        self.segmenter = Segmenter()
-
-    @logger.catch
-    def __process_text__(self, raw_data: str):
-        """
-        raw_data: String which consist all needed information for processing
-        """
-        response_data = list()
-        logger.debug(f"Incoming data is {raw_data}")
-        text = nltk.tokenize.sent_tokenize(raw_data)
-
-        for sentence in text:
-            logger.debug(f"Sentence: {sentence}")
-
-            output_data = dict()
-            output_data["emotional"] = self.tonalText(sentence)
-            output_data["forbidden"] = self.processText(sentence)
-            output_data["appeal"] = self.processAppeal(sentence)
-            output_data["text"] = sentence
-
-            response_data.append(output_data)
-
-        response_data.append({"summary": self.tonalText(raw_data)})
-        logger.debug(f"Output data is {response_data}")
-        return response_data
-
-    @logger.catch
-    @app.route('/')
-    def __call__(self):
-        data = req.json
+    @staticmethod
+    @app.route('/hooks', methods=["POST"])
+    def hooks():
+        data = flask.request.json
         if data is None:
             return 400, {}
 
-        return 400, self.__process_text__(data["text"])
+        output_data = dict()
+        try:
+            output_data = ed(data["text"])
+        except Exception as ex:
+            logger.error(f" failed on the server {ex}")
+            abort(400)
+
+        return 400, output_data
+
+    @logger.catch
+    def run_flask(self):
+        self.app.run(host="0.0.0.0", port=9000)
 
 
 if __name__ == '__main__':
@@ -64,5 +48,5 @@ if __name__ == '__main__':
 
     logger.info("Loaded all systems")
 
-    p.__process_text__('я ебал в рот эту систему. Но если так подумать не так все плохо. вступайте к нам! У нас хорошо')
-    p.app.run(debug=False)
+    ed('я ебал в рот эту систему. Но если так подумать не так все плохо. вступайте к нам! У нас хорошо')
+    p.run_flask()
