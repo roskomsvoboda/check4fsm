@@ -65,8 +65,6 @@ function updateUi() {
         
         if (response['summary'][0] == "negative") {
             hue = 50;
-        } else if (response['summary'][0] == "positive") {
-            hue = 234;
         }
 
         let bg_c_val = "background-color: hsl(" + hue + "deg " + saturation + "% " + luminosity + "%);";
