@@ -28,14 +28,16 @@ class CommunicationFlask:
     def hooks():
         data = flask.request.json
         if data is None:
-            return 400, {}
+
+            logger.error(f" failed data is None")
+            return {}
 
         output_data = dict()
         try:
             output_data = ed(data["text"])
         except Exception as ex:
             logger.error(f" failed on the server {ex}")
-            abort(400)
+            return {}
         
         return output_data
 
@@ -44,12 +46,11 @@ class CommunicationFlask:
         self.app.run(host="0.0.0.0", port=9000)
 
 
-if __name__ == '__main__':
+def run():
     logger.info("Loading all systems")
 
     p = CommunicationFlask()
 
     logger.info("Loaded all systems")
 
-    ed('я ебал в рот эту систему. Но если так подумать не так все плохо. вступайте к нам! У нас хорошо')
     p.run_flask()
