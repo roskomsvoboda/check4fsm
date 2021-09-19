@@ -65,6 +65,9 @@ function updateUi() {
         
         if (response['summary'][0] == "negative") {
             hue = 50;
+        } else {
+            hue = 180
+            luminosity = 100
         }
 
         let bg_c_val = "background-color: hsl(" + hue + "deg " + saturation + "% " + luminosity + "%);";
@@ -88,8 +91,9 @@ function updateUi() {
             
             if (sentence['emotional'][0] == "negative") {
                 hue = 50;
-            } else if (sentence['emotional'][0] == "positive") {
-                hue = 234;
+            } else {
+                hue = 180
+                luminosity = 100
             }
 
             sentence_wrap.style.backgroundColor = "hue(" + hue + ", " + saturation + ", " + luminosity + ");";
