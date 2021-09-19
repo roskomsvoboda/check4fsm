@@ -1,8 +1,36 @@
+function tooltip (evt){
+    let tooltip = document.createElement("div");
+    let target = evt.target;
+    
+    
+    if (target.querySelector("#active")) {
+        let t_act = target.querySelector("#active");
+        t_act.remove();
+    } else {
+        tooltip.style.display = "inline";
+        tooltip.style.position = "absolute";
+        tooltip.style.left = "5px";
+        tooltip.style.top = "1rem";
+        tooltip.style.fontSize = "12px";
+        if (target.getAttribute("data-red-type") == "appeal") tooltip.innerHTML = "Призыв";
+        else if (target.getAttribute("data-red-type") == "forbidden") tooltip.innerHTML = "Запрещенное слово";
+        tooltip.style.padding = "0.5em";
+        tooltip.style.border = "1px solid black";
+        tooltip.style.zIndex = "100000";
+        tooltip.fontWeight = "bold";
+        tooltip.style.backgroundColor = "white";
+        tooltip.style.drop
+        tooltip.id = "active"
+        target.appendChild(tooltip);
+    }
+    
+}
+
 function updateUi() {
-    console.log("Run script under vk page feed...");
+    console.log("Trying to add more shields...");
 
     function check_for_button() {
-        // Returns a list of places where there is no butn...
+        // Returns a list of places where there is no guard button...
 
         let all_view_btns = document.querySelectorAll(".like_cont.PostBottomActionLikeBtns");
         let empty_view_btns = [];
@@ -16,6 +44,117 @@ function updateUi() {
         return empty_view_btns;
     }
 
+    function cleaned_tokens(tokenized_text) {
+        for (let i = 0; i < tokenized_text.length; i++) {
+            tokenized_text[i] = tokenized_text[i].replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
+
+        }
+
+        return tokenized_text;
+    }
+
+    function blender(elem, response){
+        elem.innerHTML = "";
+        // text transformation ~~~magic~~~
+        // out-most div
+        let text_wrap = document.createElement("div");
+            
+        let hue = 180;
+        let saturation = 100;
+        let luminosity = 135 - response['summary'][1] * 100;
+        
+        if (response['summary'][0] == "negative") {
+            hue = 50;
+        } else {
+            hue = 180
+            luminosity = 100
+        }
+
+        let bg_c_val = "background-color: hsl(" + hue + "deg " + saturation + "% " + luminosity + "%);";
+        let padding = "padding: 1em;";
+        let display_inline = "display: inline;";
+        let cursor = "cursor: pointer;"
+        text_wrap.setAttribute("id", "vk_censor");
+        text_wrap.setAttribute("style", bg_c_val + padding + cursor);
+
+        for (let sentence of response['sentences']) {
+            // sentence-wise
+            // grab an estimation
+            // move from white-most to hue-most... 
+
+            let sentence_wrap = document.createElement("div");
+            let dirty_tokens = sentence['text'].split(' ');
+            let clean_tokens = cleaned_tokens(sentence['text'].split(' '));
+            hue = 180;
+            saturation = 100;
+            luminosity = 135 - sentence['emotional'][1] * 100;
+            
+            if (sentence['emotional'][0] == "negative") {
+                hue = 50;
+            } else {
+                hue = 180
+                luminosity = 100
+            }
+
+            sentence_wrap.style.backgroundColor = "hue(" + hue + ", " + saturation + ", " + luminosity + ");";
+            
+            sentence_wrap.setAttribute("style", bg_c_val + display_inline);
+
+            for (let fordbidden_word of sentence['forbidden']) {
+                // find index in cleaned token
+                // replace in dirty_tokens
+                let word_ind = clean_tokens.indexOf(fordbidden_word[2]);
+                let word = dirty_tokens[word_ind];
+                let div = document.createElement("div");
+                div.addEventListener("mouseenter", tooltip);
+                div.addEventListener("mouseleave", tooltip);
+                div.innerHTML = word + " ";
+                div.setAttribute("style", "background-color: hsl(0deg 100% 80%); display: inline; position: relative;" )
+                div.setAttribute("data-red-type", "forbidden");
+
+                dirty_tokens[word_ind] = div;
+                console.log(dirty_tokens)
+            }
+
+            for (let appeal_word of sentence['appeal']) {
+                // find index in cleaned token
+                // replace in dirty_tokens
+                let word_ind = clean_tokens.indexOf(appeal_word[2]);
+                let word = dirty_tokens[word_ind];
+                let div = document.createElement("div");
+                div.addEventListener("mouseenter", tooltip);
+                div.addEventListener("mouseleave", tooltip);
+                div.innerHTML = word + " ";
+                div.setAttribute("style", "background-color: hsl(0deg 100% 80%); display: inline; position: relative;" )
+                div.setAttribute("data-red-type", "appeal")
+
+                clean_tokens[word_ind] = div;
+                dirty_tokens[word_ind] = div;
+                console.log(dirty_tokens)
+            }
+
+            for (let text of dirty_tokens) {
+                if (typeof(text) === typeof("")){
+                    let word_ind = dirty_tokens.indexOf(text);
+                    let div = document.createElement("div");
+                    div.innerHTML = text + " ";
+                    div.setAttribute("style", "display: inline;" )
+
+                    
+                    dirty_tokens[word_ind] = div;
+                }
+            }
+            for (let elem of dirty_tokens) {
+                sentence_wrap.appendChild(elem);
+            }
+            text_wrap.appendChild(sentence_wrap);
+        }
+        
+        
+        elem.appendChild(text_wrap);
+        
+    }
+
     function send_text(evt) {
         // Grab the post field
         // Verify if it is filled
@@ -24,7 +163,6 @@ function updateUi() {
         let targeted_el = evt.target;
         let data_location = targeted_el.getAttribute("data-location");
         let post_box = document.createElement("p");
-        console.log(evt.target)
 
         if (data_location == "post_field") {
             post_box = document.querySelector("#" + data_location);
@@ -35,18 +173,17 @@ function updateUi() {
             post_box = triggered_post.parentElement.querySelector(".wall_post_text");
 
         }
-        
-        console.log(post_box)
 
         if (post_box) {
             if (post_box.innerHTML){
                 console.log("There is some text!\n");
-                let text = "Uploading text: " + post_box.innerHTML + " to the server..."
-                alert(text);
+                
+                let text = post_box.innerHTML;
+                
                 let body_data = {
-                    text1: post_box.innerHTML
+                    'text': text
                 }
-                let response = fetch('http://127.0.0.1:9000/', {
+                fetch('https://carefulpublishing.ru/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8',
@@ -54,11 +191,18 @@ function updateUi() {
                         "Access-Control-Allow-Credentials" : true 
                     },
                     body: JSON.stringify(body_data),
-                    referrer: "unsafe-url",
-                    credentials:"include",
-                    mode: 'no-cors'
-                });
-                let response = response.json();
+                    
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success: ', data)
+                    blender(post_box, data)
+                    console.log("Request completed!")
+                })
+                .catch(e => {
+                    console.error(e);
+                })
+
             } else {
                 alert("There is no text to send!")
             }

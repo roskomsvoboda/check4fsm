@@ -1,6 +1,6 @@
 {
 	"name": "Getting started",
-	"description": "Build an Extension!",
+	"description": "Безопасные публикации",
 	"version": "1.0",
 	"manifest_version": 3,
 	"background" : {
@@ -9,7 +9,7 @@
 	"permissions": ["storage", "activeTab", "scripting"],
 	"action": {
 		"default_popup": "html/popup.html",
-		"default_title": "click_me",
+		"default_title": "Безопасные публикации",
 		"default_icon": {
 			"16": "img/get_started16.png",
 			"32": "img/get_started32.png",
