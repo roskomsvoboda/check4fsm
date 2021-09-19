@@ -22,7 +22,7 @@ from natasha import (
 
 class ProcessText:
     @logger.catch
-    def __init__(self, cities: str = os.getcwd() + "/data/cities.json", ner: str = os.getcwd() + "/data/NER.json"):
+    def __init__(self, cities: str = os.getcwd() + "..//data/cities.json", ner: str = os.getcwd() + "..//data/NER.json"):
         self.cities = json.load(open(cities, 'r'))
         self.ner = json.load(open(ner, 'r'))
 
