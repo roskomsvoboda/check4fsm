@@ -1,5 +1,29 @@
 function tooltip (evt){
-    console.log(evt);
+    let tooltip = document.createElement("div");
+    let target = evt.target;
+    
+    
+    if (target.querySelector("#active")) {
+        let t_act = target.querySelector("#active");
+        t_act.remove();
+    } else {
+        tooltip.style.display = "inline";
+        tooltip.style.position = "absolute";
+        tooltip.style.left = "5px";
+        tooltip.style.top = "1rem";
+        tooltip.style.fontSize = "12px";
+        if (target.getAttribute("data-red-type") == "appeal") tooltip.innerHTML = "Призыв";
+        else if (target.getAttribute("data-red-type") == "forbidden") tooltip.innerHTML = "Запрещенное слово";
+        tooltip.style.padding = "0.5em";
+        tooltip.style.border = "1px solid black";
+        tooltip.style.zIndex = "100000";
+        tooltip.fontWeight = "bold";
+        tooltip.style.backgroundColor = "white";
+        tooltip.style.drop
+        tooltip.id = "active"
+        target.appendChild(tooltip);
+    }
+    
 }
 
 function updateUi() {
@@ -83,7 +107,8 @@ function updateUi() {
                 div.addEventListener("mouseenter", tooltip);
                 div.addEventListener("mouseleave", tooltip);
                 div.innerHTML = word + " ";
-                div.setAttribute("style", "background-color: hsl(0deg 100% 80%); display: inline;" )
+                div.setAttribute("style", "background-color: hsl(0deg 100% 80%); display: inline; position: relative;" )
+                div.setAttribute("data-red-type", "forbidden");
 
                 dirty_tokens[word_ind] = div;
                 console.log(dirty_tokens)
@@ -98,7 +123,8 @@ function updateUi() {
                 div.addEventListener("mouseenter", tooltip);
                 div.addEventListener("mouseleave", tooltip);
                 div.innerHTML = word + " ";
-                div.setAttribute("style", "background-color: hsl(0deg 100% 80%); display: inline;" )
+                div.setAttribute("style", "background-color: hsl(0deg 100% 80%); display: inline; position: relative;" )
+                div.setAttribute("data-red-type", "appeal")
 
                 clean_tokens[word_ind] = div;
                 dirty_tokens[word_ind] = div;
@@ -109,8 +135,6 @@ function updateUi() {
                 if (typeof(text) === typeof("")){
                     let word_ind = dirty_tokens.indexOf(text);
                     let div = document.createElement("div");
-                    div.addEventListener("mouseenter", tooltip);
-                    div.addEventListener("mouseleave", tooltip);
                     div.innerHTML = text + " ";
                     div.setAttribute("style", "display: inline;" )
 
