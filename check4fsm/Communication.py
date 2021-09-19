@@ -16,12 +16,11 @@ import os
 
 logger.add(f"{os.getcwd()}/.logger.log", format="{time} {level} {message}", rotation="50 MB")
 
-ed = None
+ed = ExtractData(os.getcwd() + "/../data/cities.json", os.getcwd() + "/../data/NER.json")
 app = flask.Flask(__name__)
 
 class CommunicationFlask:
     CORS(app)
-
     def __init__(self, cities: str = os.getcwd() + "/../data/cities.json",
                  ner: str = os.getcwd() + "/../data/NER.json"):
         global ed

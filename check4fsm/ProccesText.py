@@ -79,7 +79,7 @@ class ProcessText:
     def __call__(self, text: str):
         fi = self.__extract_data(text)
         if fi == list():
-            return None
+            return list()
 
         output_data = list()
         for data in fi:
