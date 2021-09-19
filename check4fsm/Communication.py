@@ -14,11 +14,12 @@ import nltk
 
 logger.add(".logger.log", format="{time} {level} {message}", rotation="50 MB")
 
+ed = ExtractData()
 
 
 class CommunicationFlask:
-
     app = flask.Flask(__name__)
+
     def __init__(self):
         pass
 
@@ -28,7 +29,6 @@ class CommunicationFlask:
     def hooks():
         data = flask.request.json
         if data is None:
-
             logger.error(f" failed data is None")
             return {}
 
@@ -38,12 +38,13 @@ class CommunicationFlask:
         except Exception as ex:
             logger.error(f" failed on the server {ex}")
             return {}
-        
+
         return output_data
 
     @logger.catch
     def run_flask(self):
-        self.app.run(host="0.0.0.0", port=9000)
+        self.app.run(host="0.0.0.0", port=9000, ssl_context=(
+        '/etc/letsencrypt/csr/0000_csr-certbot.pem', '/etc/letsencrypt/keys/0000_key-certbot.pem'))
 
 
 def run():
