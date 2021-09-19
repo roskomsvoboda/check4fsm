@@ -66,9 +66,10 @@ class CommunicationFlask:
 
     @logger.catch
     def run_flask(self):
-        self.app.run(host="0.0.0.0", port=9000)
+        global app
+        app.run(host="0.0.0.0", port=9000)
 
-def run(cities: str = os.getcwd() + "/../data/cities.json", ner: str = os.getcwd() + "/..//data/NER.json"):
+def run(cities: str = os.getcwd() + "/data/cities.json", ner: str = os.getcwd() + "/data/NER.json"):
     logger.info("Loading all systems")
 
     p = CommunicationFlask(cities, ner)
@@ -78,4 +79,4 @@ def run(cities: str = os.getcwd() + "/../data/cities.json", ner: str = os.getcwd
     p.run_flask()
 
 if __name__ == '__main__':
-    run()
+    run( os.getcwd() + "/data/cities.json", os.getcwd() + "/data/NER.json")

@@ -6,11 +6,11 @@ from check4fsm.ProcessAppeal import ProcessAppeal
 
 from natasha import Segmenter, Doc
 from loguru import logger
-import os
 import flask
 import time
 import nltk
-
+import os
+import re
 
 class ExtractData:
     @logger.catch
@@ -23,6 +23,12 @@ class ExtractData:
 
         self.segmenter = Segmenter()
 
+    @staticmethod
+    @logger.catch
+    def __delete_hash_data__(text: str):
+        cleaner = re.compile('<.*?>')
+        return re.sub(cleaner, '', text)
+
     @logger.catch
     def __call__(self, raw_data: str):
         """
@@ -31,6 +37,8 @@ class ExtractData:
         response_data = dict()
         response_data["sentences"] = list()
         logger.debug(f"Incoming data is {raw_data}")
+        raw_data = ExtractData.__delete_hash_data__(raw_data)
+        logger.debug(f"Parsed Data {raw_data}")
         text = nltk.tokenize.sent_tokenize(raw_data)
 
         for sentence in text:
