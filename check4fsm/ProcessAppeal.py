@@ -57,8 +57,18 @@ class ProcessAppeal:
         appeals = list()
         for token in doc.tokens:
             logger.debug(f"{token.text} {token.as_json}")
+            if token.pos == "PROPN":
+                appeals.append(self.__prepare_text(token))
+                head_id = int(token.head_id.split('_')[-1]) - 1
+                if head_id != -1:
+                    appeals.append(self.__prepare_text(doc.tokens[head_id]))
             if token.pos == 'NOUN' or token.pos == 'VERB':
                 head_id = int(token.head_id.split('_')[-1]) - 1
+                if token.rel == 'root':
+                    for token_2 in doc.tokens:
+                        if token_2.head_id == token.id and token_2.pos in ['PART', 'PRON', 'VERB', 'NOUN'] :
+                            appeals.append(self.__prepare_text(token_2))
+
                 if doc.tokens[head_id].pos != 'ADJ':
                     continue
                 appeals.append(self.__prepare_text(doc.tokens[head_id]))
