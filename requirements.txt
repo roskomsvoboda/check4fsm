@@ -3,3 +3,4 @@ loguru==0.5.3
 natasha==1.4.0
 flask
 nltk
+flask_cors

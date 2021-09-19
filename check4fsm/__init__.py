@@ -5,4 +5,8 @@ from .ProcessAppeal import ProcessAppeal
 from .Communication import CommunicationFlask
 from .extractAllData import ExtractData
 
-ed = ExtractData()
+# ed = ExtractData()
+# from .Communication import run
+#
+# if __name__ == '__main__':
+#     run()
