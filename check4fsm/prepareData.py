@@ -24,7 +24,7 @@ from natasha import (
 
 
 @logger.catch
-def getFSM(filename: str = os.getcwd() + "/../data/exportfsm.csv",
+def getFSM(filename: str = os.getcwd() + "/data/exportfsm.csv",
            encoding_: str = "windows-1251") -> dict:
     output_data = {'sentence': list(), 'date': list()}
     try:
@@ -40,8 +40,8 @@ def getFSM(filename: str = os.getcwd() + "/../data/exportfsm.csv",
 
 
 @logger.catch
-def extractDataFromFSM(filename: str = os.getcwd() + "/../data/exportfsm.csv",
-                       cities: str = os.getcwd() + "/../data/cities.json"):
+def extractDataFromFSM(filename: str = os.getcwd() + "/data/exportfsm.csv",
+                       cities: str = os.getcwd() + "/data/cities.json"):
     all_data = dict()
 
     all_data['names'] = list()
@@ -102,5 +102,5 @@ if __name__ == '__main__':
     getFSM()
     prepared_data = extractDataFromFSM()
 
-    with open(os.getcwd() + "/../data/NER.json", 'w') as f:
+    with open(os.getcwd() + "/data/NER.json", 'w') as f:
         json.dump(prepared_data, f, ensure_ascii=False, indent=4)
