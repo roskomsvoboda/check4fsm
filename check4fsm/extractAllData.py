@@ -26,7 +26,8 @@ class ExtractData:
         """
         raw_data: String which consist all needed information for processing
         """
-        response_data = list()
+        response_data = dict()
+        response_data["sentenses"] = list()
         logger.debug(f"Incoming data is {raw_data}")
         text = nltk.tokenize.sent_tokenize(raw_data)
 
@@ -39,8 +40,8 @@ class ExtractData:
             output_data["appeal"] = self.processAppeal(sentence)
             output_data["text"] = sentence
 
-            response_data.append(output_data)
+            response_data["sentenses"].append(output_data)
 
-        response_data.append({"summary": self.tonalText(raw_data)})
+        response_data["summary"] = self.tonalText(raw_data) 
         logger.debug(f"Output data is {response_data}")
         return response_data
