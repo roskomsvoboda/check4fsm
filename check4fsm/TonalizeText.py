@@ -16,7 +16,8 @@ class TonalText:
         if isinstance(text, str):
             text = [text]
         model_predict = self.model.predict(text, k=5)[0]
-        return max(model_predict.items(), key=lambda k: k[1])
+        max_values = max(model_predict.items(), key=lambda k: k[1])
+        return  max_values if max_values is not None else list()
 
 
 

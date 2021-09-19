@@ -186,7 +186,9 @@ function updateUi() {
                 fetch('https://carefulpublishing.ru/', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json;charset=utf-8',
+                        "Access-Control-Allow-Origin" : "*", 
+                        "Access-Control-Allow-Credentials" : true 
                     },
                     body: JSON.stringify(body_data),
                     

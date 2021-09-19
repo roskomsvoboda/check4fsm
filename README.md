@@ -24,6 +24,13 @@ python prepareData.py
 
 This will generate `data/NER.json` which consist all forbidden information.
 
+## Run
+
+```
+cd ~/check4sum # in root of the project
+python -m check4fsm 
+```
+
 ## Usage 
 
 Here some examples of using this repo.

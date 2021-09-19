@@ -5,9 +5,10 @@ from .ProcessAppeal import ProcessAppeal
 from .Communication import CommunicationFlask
 from .extractAllData import ExtractData
 
-import ProccesText
-import ProcessAppeal
-import prepareData
-import TonalizeText
-import Communication
-import extractAllData
+from .Communication import run
+
+import os
+
+
+if __name__ == '__main__':
+    run( os.getcwd() + "/data/cities.json", os.getcwd() + "/data/NER.json")

@@ -22,7 +22,7 @@ from natasha import (
 
 class ProcessText:
     @logger.catch
-    def __init__(self, cities: str = os.getcwd() + "/../data/cities.json", ner: str = os.getcwd() + "/../data/NER.json"):
+    def __init__(self, cities: str = os.getcwd() + "/data/cities.json", ner: str = os.getcwd() + "/data/NER.json"):
         self.cities = json.load(open(cities, 'r'))
         self.ner = json.load(open(ner, 'r'))
 
@@ -63,7 +63,7 @@ class ProcessText:
         for fact in doc.spans:
             if fact.text in self.cities['cities'] or fact.text in self.cities['subjects']:
                 continue
-            found = None
+            found = False
             if fact.type == PER:
                 found, info = ProcessText.search(self.ner, fact.as_json, 'names')
             if fact.type == LOC:
@@ -79,7 +79,7 @@ class ProcessText:
     def __call__(self, text: str):
         fi = self.__extract_data(text)
         if fi == list():
-            return None
+            return list()
 
         output_data = list()
         for data in fi:
