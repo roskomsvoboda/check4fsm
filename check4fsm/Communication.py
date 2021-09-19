@@ -14,7 +14,7 @@ import time
 import nltk
 import os
 
-logger.add(".logger.log", format="{time} {level} {message}", rotation="50 MB")
+logger.add(f"{os.getcwd()}/.logger.log", format="{time} {level} {message}", rotation="50 MB")
 
 ed = None
 
@@ -25,15 +25,35 @@ class CommunicationFlask:
     CORS(app)
 
     def __init__(self, cities: str = os.getcwd() + "/../data/cities.json",
-                 ner: str = os.getcwd() + "/..//data/NER.json"):
+                 ner: str = os.getcwd() + "/../data/NER.json"):
         global ed
         ed = ExtractData(cities, ner)
+
+    @staticmethod
+    @logger.catch
+    @app.route('/', methods=["GET"])
+    def main_route():
+        data = flask.request.json
+        global ed
+        if data is None:
+            logger.error(f" failed data is None")
+            return {}
+
+        output_data = dict()
+        try:
+            output_data = ed(data["text"])
+        except Exception as ex:
+            logger.error(f" failed on the server {ex}")
+            return {}
+
+        return output_data
 
     @staticmethod
     @logger.catch
     @app.route('/', methods=["POST"])
     def hooks():
         data = flask.request.json
+        global ed
         if data is None:
             logger.error(f" failed data is None")
             return {}
