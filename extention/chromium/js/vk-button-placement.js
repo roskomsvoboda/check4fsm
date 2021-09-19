@@ -44,20 +44,21 @@ function updateUi() {
                 let text = "Uploading text: " + post_box.innerHTML + " to the server..."
                 alert(text);
                 let body_data = {
-                    'text': post_box.innerHTML
+                    text1: post_box.innerHTML
                 }
-                fetch('https://195.22.153.237:9000/', {
+                let response = fetch('http://127.0.0.1:9000/', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json;charset=utf-8',
+                        "Access-Control-Allow-Origin" : "*", 
+                        "Access-Control-Allow-Credentials" : true 
                     },
-                    body: body_data
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success: ', data)
-                })
-                console.log("Request sent...")
+                    body: JSON.stringify(body_data),
+                    referrer: "unsafe-url",
+                    credentials:"include",
+                    mode: 'no-cors'
+                });
+                let response = response.json();
             } else {
                 alert("There is no text to send!")
             }
