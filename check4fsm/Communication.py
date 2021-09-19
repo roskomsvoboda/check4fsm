@@ -8,6 +8,7 @@ from check4fsm import *
 
 from natasha import Segmenter, Doc
 from loguru import logger
+from flask_cors import CORS
 import flask
 import time
 import nltk
@@ -19,6 +20,7 @@ ed = ExtractData()
 
 class CommunicationFlask:
     app = flask.Flask(__name__)
+    CORS(app)
 
     def __init__(self):
         pass
@@ -43,8 +45,7 @@ class CommunicationFlask:
 
     @logger.catch
     def run_flask(self):
-        self.app.run(host="0.0.0.0", port=9000, ssl_context=(
-        '/etc/letsencrypt/csr/0000_csr-certbot.pem', '/etc/letsencrypt/keys/0000_key-certbot.pem'))
+        self.app.run(host="0.0.0.0", port=9000)
 
 
 def run():
