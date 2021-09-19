@@ -17,11 +17,9 @@ import os
 logger.add(f"{os.getcwd()}/.logger.log", format="{time} {level} {message}", rotation="50 MB")
 
 ed = None
-
+app = flask.Flask(__name__)
 
 class CommunicationFlask:
-    app = flask.Flask(__name__)
-
     CORS(app)
 
     def __init__(self, cities: str = os.getcwd() + "/../data/cities.json",
