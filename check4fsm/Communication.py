@@ -12,18 +12,22 @@ from flask_cors import CORS
 import flask
 import time
 import nltk
+import os
 
 logger.add(".logger.log", format="{time} {level} {message}", rotation="50 MB")
 
-ed = ExtractData()
+ed = None
 
 
 class CommunicationFlask:
     app = flask.Flask(__name__)
+
     CORS(app)
 
-    def __init__(self):
-        pass
+    def __init__(self, cities: str = os.getcwd() + "/../data/cities.json",
+                 ner: str = os.getcwd() + "/..//data/NER.json"):
+        global ed
+        ed = ExtractData(cities, ner)
 
     @staticmethod
     @logger.catch
@@ -48,10 +52,10 @@ class CommunicationFlask:
         self.app.run(host="0.0.0.0", port=9000)
 
 
-def run():
+def run(cities: str = os.getcwd() + "/../data/cities.json", ner: str = os.getcwd() + "/..//data/NER.json"):
     logger.info("Loading all systems")
 
-    p = CommunicationFlask()
+    p = CommunicationFlask(cities, ner)
 
     logger.info("Loaded all systems")
 

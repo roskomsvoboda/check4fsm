@@ -7,5 +7,8 @@ from .extractAllData import ExtractData
 
 from .Communication import run
 
+import os
+
+
 if __name__ == '__main__':
-    run()
+    run( os.getcwd() + "/data/cities.json", os.getcwd() + "/data/NER.json")

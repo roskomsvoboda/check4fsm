@@ -6,20 +6,22 @@ from check4fsm.ProcessAppeal import ProcessAppeal
 
 from natasha import Segmenter, Doc
 from loguru import logger
+import os
 import flask
 import time
 import nltk
 
+
 class ExtractData:
     @logger.catch
-    def __init__(self):
+    def __init__(self, cities: str = os.getcwd() + "/../data/cities.json",
+                 ner: str = os.getcwd() + "/..//data/NER.json"):
         nltk.download('punkt')
         self.processAppeal = ProcessAppeal()
-        self.processText = ProcessText()
+        self.processText = ProcessText(cities, ner)
         self.tonalText = TonalText()
 
         self.segmenter = Segmenter()
-
 
     @logger.catch
     def __call__(self, raw_data: str):
@@ -42,6 +44,6 @@ class ExtractData:
 
             response_data["sentenses"].append(output_data)
 
-        response_data["summary"] = self.tonalText(raw_data) 
+        response_data["summary"] = self.tonalText(raw_data)
         logger.debug(f"Output data is {response_data}")
         return response_data
