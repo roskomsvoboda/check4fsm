@@ -47,3 +47,4 @@ class ExtractData:
         response_data["summary"] = self.tonalText(raw_data)
         logger.debug(f"Output data is {response_data}")
         return response_data
+

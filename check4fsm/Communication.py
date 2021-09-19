@@ -71,7 +71,6 @@ class CommunicationFlask:
     def run_flask(self):
         self.app.run(host="0.0.0.0", port=9000)
 
-
 def run(cities: str = os.getcwd() + "/../data/cities.json", ner: str = os.getcwd() + "/..//data/NER.json"):
     logger.info("Loading all systems")
 
