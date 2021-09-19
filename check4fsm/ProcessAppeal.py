@@ -56,15 +56,17 @@ class ProcessAppeal:
             span.normalize(self.morph_vocab)
         appeals = list()
         for token in doc.tokens:
+            logger.debug(f"{token.text} {token.as_json}")
             if token.pos == 'NOUN' or token.pos == 'VERB':
                 head_id = int(token.head_id.split('_')[-1]) - 1
                 if doc.tokens[head_id].pos != 'ADJ':
                     continue
-                appeals.append(( self.__prepare_text(doc.tokens[head_id]),self.__prepare_text(token)))
+                appeals.append( self.__prepare_text(doc.tokens[head_id]),self.__prepare_text(token))
         return appeals if len(appeals) else list()
 
 
-# if __name__ == '__main__':
-#     p = ProcessAppeal()
-#     print(f"'Ты обязан вступить к нам: {p('Ты обязан вступить к нам.')}")
-#     print(f"'Ты вступишь к нам?': {p('Ты вступишь к нам?')}")
+if __name__ == '__main__':
+    p = ProcessAppeal()
+    print(f"'Ты обязан вступить к нам: {p('Ты обязан вступить к нам.')}")
+    print(f"'Ты вступишь к нам?': {p('Ты вступишь к нам?')}")
+    print(f"'Сядь': {p('Сядь')}")
