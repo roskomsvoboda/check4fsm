@@ -61,7 +61,7 @@ class ProcessAppeal:
                 if doc.tokens[head_id].pos != 'ADJ':
                     continue
                 appeals.append(( self.__prepare_text(doc.tokens[head_id]),self.__prepare_text(token)))
-        return appeals if len(appeals) else None
+        return appeals if len(appeals) else list()
 
 
 # if __name__ == '__main__':
