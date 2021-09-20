@@ -13,7 +13,7 @@ requirements = parse_requirements()
 
 setuptools.setup(
     name='check4fsm',
-    version='0.0.15',
+    version='0.0.16',
     # scripts=['arcturus'],
     author="Stanisalv Kiselev",
     author_email="ristleell@gmail.com",
