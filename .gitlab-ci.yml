@@ -117,10 +117,25 @@ release_creation:
     - python setup.py build
     - python setup.py install
   script:
-    - python setup.py sdist bdist_wheel
+    - python setup.py sdist bdist_wheel    
   artifacts:
     paths:
       - dist/*whl
+
+upload_python_package:
+  stage: publish
+  image: python:3.8
+  only:
+    - main
+  needs:
+  - job: release_creation
+    artifacts: true
+  before_script:
+    - pip install twine
+  script:
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+    
+
 
 release_upload:
   stage: publish
